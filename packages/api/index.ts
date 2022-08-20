@@ -1,22 +1,30 @@
 import cors from "@fastify/cors";
 import fastify from "fastify";
+// import formBody from "@fastify/formbody";
 import fs from "fs";
 
 const server = fastify();
 server.register(cors);
+// server.register(formBody);
+// server.addContentTypeParser(
+//   "text/plain",
+//   { parseAs: "string" },
+//   (req, body: any, done) => done(body)
+// );
 
 server.get("/prisma", async (request, reply) => {
-  return await fs.readFileSync("./files/example-schema.prisma", "utf8");
+  const text = await fs.readFileSync("./files/example-schema.prisma", "utf8");
+  return { text };
 });
 
-server.put<{ Body: { data: string } }>(
+server.put<{ Body: { text: string } }>(
   "/prisma",
   {
     schema: {
       body: {
         type: "object",
         properties: {
-          data: {
+          text: {
             type: "string",
           },
         },
@@ -24,7 +32,7 @@ server.put<{ Body: { data: string } }>(
     },
   },
   async (request, reply) => {
-    await fs.writeFileSync("./files/example-schema.prisma", request.body.data);
+    await fs.writeFileSync("./files/example-schema.prisma", request.body.text);
     return { message: "ok" };
   }
 );

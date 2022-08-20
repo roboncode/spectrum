@@ -14,25 +14,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const cors_1 = __importDefault(require("@fastify/cors"));
 const fastify_1 = __importDefault(require("fastify"));
+// import formBody from "@fastify/formbody";
 const fs_1 = __importDefault(require("fs"));
 const server = (0, fastify_1.default)();
 server.register(cors_1.default);
+// server.register(formBody);
+// server.addContentTypeParser(
+//   "text/plain",
+//   { parseAs: "string" },
+//   (req, body: any, done) => done(body)
+// );
 server.get("/prisma", (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield fs_1.default.readFileSync("./files/example-schema.prisma", "utf8");
+    const text = yield fs_1.default.readFileSync("./files/example-schema.prisma", "utf8");
+    return { text };
 }));
 server.put("/prisma", {
     schema: {
         body: {
             type: "object",
             properties: {
-                data: {
+                text: {
                     type: "string",
                 },
             },
         },
     },
 }, (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    yield fs_1.default.writeFileSync("./files/example-schema.prisma", request.body.data);
+    yield fs_1.default.writeFileSync("./files/example-schema.prisma", request.body.text);
     return { message: "ok" };
 }));
 server.put("/schema", {

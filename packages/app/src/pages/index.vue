@@ -79,6 +79,18 @@ const updateSchema = async (source: any) => {
   })
 }
 
+const savePrismaSchema = async () => {
+  await fetch('http://localhost:8080/prisma', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+     body: JSON.stringify({
+      text: input?.value || ''
+    })
+  })
+}
+
 const saveAllSchemas = async () => {
   await fetch('http://localhost:8080/schemas', {
     method: 'PUT',
@@ -111,8 +123,10 @@ watch([input, operationType, generatorType], async (v) => {
 const codeEditor = ref()
 
 const useExample = async () => {
-  const results = await fetch('/example-schema.prisma')
-  input.value = await results.text()
+  // const results = await fetch('/example-schema.prisma')
+  const results = await fetch('http://localhost:8080/prisma')
+  const data = await results.json()
+  input.value = data.text
 }
 
 onMounted(async () => {
@@ -145,6 +159,7 @@ onMounted(async () => {
       <div class="sticky top-0 w-full h-row p-2 z-1">
         <div class="flex-grow"></div>
         <!-- <button class="btn bg-base border-base" @click="selectedModel = ''">Clear Select Model</button> -->
+        <button v-if="input" class="btn bg-base border-base" @click="savePrismaSchema()">Save</button>
         <button v-if="input" class="btn bg-base border-base" @click="input = ''">Clear</button>
         <button v-else="input" class="btn bg-base border-base" @click="useExample()">Use Prisma
           Example</button>
