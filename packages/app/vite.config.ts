@@ -15,6 +15,9 @@ export default defineConfig({
   server: {
     https: false,
     port: 8765,
+    watch: {
+      ignored: ['files/**', 'api/**']
+    }
   },
   resolve: {
     alias: {
@@ -82,7 +85,7 @@ export default defineConfig({
         "link": "font-semibold text-primary hover:underline cursor-pointer",
         "avatar": "flex items-center justify-center uppercase font-bold bg-primary text-white text-xl w-12 h-12 overflow-hidden rounded-full border-4 border-white",
         "menu-item": "flex items-center gap-4 cursor-pointer p-2 px-5 text-gray-600 hover:bg-highlight hover:rounded-r-full text-sm font-medium",
-        "menu-item-active": "text-primary !bg-blue-50 rounded-r     -full",
+        "menu-item-active": "text-primary !bg-blue-50 rounded-r w-full",
         "snackbar-content": "flex items-center gap-1 px-5 py-3 bg-black rounded text-white text-sm font-bold drop-shadow-lg",
         "sidebar": "fixed top-18 bottom-0 w-100",
         "card": "bg-white border-1 border-gray-200 md:rounded-lg overflow-hidden",

@@ -1,0 +1,7 @@
+# update prisma file
+PUT http://localhost:8080/prisma
+Content-Type: application/json
+
+{
+    "data": "Hello, world!"
+}

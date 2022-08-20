@@ -97,7 +97,7 @@ const highlight = useDebounceFn(() => {
         val = JSON.stringify(val, null, 2)
     }
     html.value = Prism.highlight(val, Prism.languages[props.language], props.language)
-    code.value.innerHTML = html.value
+    code.value.innerHTML = html.value || ''
     decorateModels()
 })
 

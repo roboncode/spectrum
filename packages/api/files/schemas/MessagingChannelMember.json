@@ -1,0 +1,66 @@
+{
+  "$id": "MessagingChannelMemberSchema",
+  "type": "object",
+  "required": [
+    "id",
+    "channelId",
+    "userId",
+    "role",
+    "name",
+    "muted",
+    "notify",
+    "createdAt",
+    "lastReadAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "channelId": {
+      "type": "string"
+    },
+    "channel": {
+      "$ref": "MessagingChannel.json#"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "user": {
+      "$ref": "MessagingUser.json#"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "member"
+      ],
+      "default": "member"
+    },
+    "name": {
+      "type": "string",
+      "description": "should always match user's name"
+    },
+    "muted": {
+      "type": "boolean",
+      "default": false
+    },
+    "notify": {
+      "type": "string",
+      "enum": [
+        "all",
+        "mentions",
+        "none"
+      ],
+      "default": "all"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lastReadAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

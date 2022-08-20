@@ -66,6 +66,19 @@ const copyToClipboard = (source: any) => {
   snackbar.value?.open({ text: 'Copied to clipboard!' })
 }
 
+const updateSchema = async (source: any) => {
+  await fetch('http://localhost:8080/schema', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: source.$id.replace(/Schema$/g, ""),
+      text: JSON.stringify(source)
+    })
+  })
+}
+
 const viewerClickHandler = (name: string) => {
   if (name) {
     selectedModel.value = name
@@ -199,7 +212,10 @@ onMounted(async () => {
           <div class="sticky top-10 h-row bg-shade color-base border-y border-base px-4 p-2">
             <div class="font-bold">{{ schema.$id }}</div>
             <div class="flex-grow"></div>
-            <button class="btn bg-base border-base btn-icon" @click="copyToClipboard(schema)">
+            <button class="btn bg-base border-base btn-icon" type="button" @click="updateSchema(schema)">
+              <span class="i-tabler-device-floppy text-lg"></span>
+            </button>
+            <button class="btn bg-base border-base btn-icon" type="button" @click="copyToClipboard(schema)">
               <span class="i-tabler-clipboard text-lg"></span>
             </button>
           </div>

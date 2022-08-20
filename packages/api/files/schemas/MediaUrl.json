@@ -1,0 +1,14 @@
+{
+  "$id": "MediaUrlSchema",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "url": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    }
+  }
+}
