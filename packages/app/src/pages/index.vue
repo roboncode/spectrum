@@ -79,6 +79,16 @@ const updateSchema = async (source: any) => {
   })
 }
 
+const saveAllSchemas = async () => {
+  await fetch('http://localhost:8080/schemas', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(schemas.value)
+  })
+}
+
 const viewerClickHandler = (name: string) => {
   if (name) {
     selectedModel.value = name
@@ -145,7 +155,7 @@ onMounted(async () => {
     <div class="w-1 bg-highlight"></div>
     <div class="w-full h-full overflow-y-auto color-base">
       <div v-if="generatorType === 'schema' || generatorType === 'typescript'"
-        class="sticky top-0 w-full tabs bg-base color-base border-b border-base z-1">
+        class="sticky top-0 w-full tabs pr-2 bg-base color-base border-b border-base z-1">
         <input type="radio" name="operation" value="create" data-title="Create" class="tab" v-model="operationType" />
         <input type="radio" name="operation" value="read" :data-title="`Read`" class="tab" v-model="operationType" />
         <input type="radio" name="operation" value="update" :data-title="`Update`" class="tab"
@@ -153,7 +163,8 @@ onMounted(async () => {
         <input type="radio" name="operation" value="delete" :data-title="`Delete`" class="tab"
           v-model="operationType" />
         <div class="flex-grow"></div>
-        <div class="px-4 font-bold text-light-blue-400">{{ selectedModel }}</div>
+        <button class="btn btn-sm bg-base border-base" @click="saveAllSchemas">Save All Schemas</button>
+        <!-- <div class="px-4 font-bold text-light-blue-400">{{ selectedModel }}</div> -->
       </div>
 
       <!-- token -->
