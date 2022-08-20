@@ -56,9 +56,12 @@ const decorateModels = useDebounceFn(() => {
         if (ignoreClassList.includes(el.innerText)) {
             return
         }
-        el.classList.add('clickable')
-    }
-    )
+        if (props.editable) {
+            el.classList.add('clickable')
+        } else {
+            el.classList.add('model')
+        }
+    })
 })
 
 const keyDownHandler = (e: KeyboardEvent) => {
@@ -117,13 +120,13 @@ watch(() => props.modelValue, useDebounceFn((v: any) => {
 </script>
 
 <template>
-    <div class="container" :class="{'editor': editable}">
+    <div class="container" :class="{ 'editor': editable }">
         <pre ref="viewer" class="editor text-xs ring-0 p-4 w-full h-full" :class="{ hidden: !modelValue }"
             @keydown="keyDownHandler($event)" @cut="cutHandler($event)" @paste="pasteHandler($event)"
             @click="clickHandler($event)"><code ref="code" :contenteditable="editable" spellcheck="false" class="border-none focus:ring-0 focus:ring-offset-0 focus:outline-none min-w-full min-h-full"></code></pre>
         <textarea v-if="!modelValue" ref="textarea"
-            class="w-full h-full bg-transparent p-4 text-sm color-base outline-none resize-none"
-            v-model="modelValue" placeholder="Paste your code here..." @input="textInputHandler($event)"></textarea>
+            class="w-full h-full bg-transparent p-4 text-sm color-base outline-none resize-none" v-model="modelValue"
+            placeholder="Paste your code here..." @input="textInputHandler($event)"></textarea>
     </div>
 </template>
 
@@ -148,9 +151,12 @@ watch(() => props.modelValue, useDebounceFn((v: any) => {
     color: #f05eff;
 }
 
+.dark .token.model {
+    color: #00a0fd;
+}
+
 .dark .token.clickable {
     color: #00a0fd;
-    padding: 2px 4px;
 }
 
 .dark .token.clickable:hover {
