@@ -9,6 +9,7 @@ const getType = (propertyToken: PropertyToken, modelTokens: ModelToken[], enumTo
     case 'Boolean':
       return 'boolean'
     case 'Int':
+    case 'BigInt':
     case 'Float':
       return 'number'
     case 'DateTime':

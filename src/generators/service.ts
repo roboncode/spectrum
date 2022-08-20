@@ -7,6 +7,7 @@ const getTypeScriptType = (type: string) => {
     case 'Boolean':
       return 'boolean'
     case 'Int':
+    case 'BigInt':
     case 'Float':
       return 'number'
     case 'DateTime':

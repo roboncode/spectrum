@@ -67,17 +67,19 @@ const copyToClipboard = (source: any) => {
 }
 
 const viewerClickHandler = (name: string) => {
-  selectedModel.value = name || ''
+  if (name) {
+    selectedModel.value = name
+  }
+  // selectedModel.value = name || ''
 }
 
-watch([input, operationType, generatorType], async (value) => {
+watch([input, operationType, generatorType], async (v) => {
   tokens.value = await generateTokens(input.value)
   if (tokens.value && generatorType.value === 'schema') {
     schemas.value = generateSchemas(operationType.value, tokens.value.modelTokens, tokens.value.enumTokens)
   } else if (tokens.value && generatorType.value === 'typescript') {
     typescript.value = generateTypeScript(operationType.value, tokens.value.modelTokens, tokens.value.enumTokens)
   } else if (tokens.value && generatorType.value === 'service') {
-    console.log('you are here')
     service.value = generateService(tokens.value.modelTokens)
   }
 }, { immediate: true })
@@ -85,10 +87,14 @@ watch([input, operationType, generatorType], async (value) => {
 
 const codeEditor = ref()
 
+const useExample = async () => {
+  const results = await fetch('/example-schema.prisma')
+  input.value = await results.text()
+}
+
 onMounted(async () => {
   if (!input.value) {
-    const results = await fetch('/example-schema.prisma')
-    input.value = await results.text()
+    useExample()
   }
 })
 </script>
@@ -113,12 +119,20 @@ onMounted(async () => {
 
   <div class="fixed top-14 pb-14 left-0 w-full h-screen flex bg-base">
     <div class="relative w-full h-full overflow-auto line-numbers">
-      <CodeViewer ref="codeEditor" :code="input" :editable="true" @viewer:click="viewerClickHandler($event)" />
+      <div class="sticky top-0 w-full h-row p-2 z-1">
+        <div class="flex-grow"></div>
+        <!-- <button class="btn bg-base border-base" @click="selectedModel = ''">Clear Select Model</button> -->
+        <button v-if="input" class="btn bg-base border-base" @click="input = ''">Clear</button>
+        <button v-else="input" class="btn bg-base border-base" @click="useExample()">Use Prisma
+          Example</button>
+      </div>
+      <CodeViewer ref="codeEditor" class="pb-8" v-model="input" :editable="true"
+        @viewer:click="viewerClickHandler($event)" />
     </div>
     <div class="w-1 bg-highlight"></div>
     <div class="w-full h-full overflow-y-auto color-base">
       <div v-if="generatorType === 'schema' || generatorType === 'typescript'"
-        class="sticky top-0 w-full tabs bg-base color-base border-b-2 border-base z-1">
+        class="sticky top-0 w-full tabs bg-base color-base border-b border-base z-1">
         <input type="radio" name="operation" value="create" data-title="Create" class="tab" v-model="operationType" />
         <input type="radio" name="operation" value="read" :data-title="`Read`" class="tab" v-model="operationType" />
         <input type="radio" name="operation" value="update" :data-title="`Update`" class="tab"
@@ -139,11 +153,12 @@ onMounted(async () => {
               <div class="text-xs uppercase font-bold rounded bg-highlight px-3 py-1">Enum</div>
               <div class="font-bold">{{ token.name }}</div>
               <div class="flex-grow"></div>
+              <button v-if="selectedModel" class="btn bg-base border-base" @click="selectedModel = ''">Show All</button>
               <button class="btn bg-base border-base btn-icon" @click="copyToClipboard(token)">
                 <span class="i-tabler-clipboard text-lg"></span>
               </button>
             </div>
-            <CodeViewer :code="token" />
+            <CodeViewer :modelValue="token" />
           </div>
         </div>
         <div v-if="!selectedModel || filteredTypeTokens.length">
@@ -153,11 +168,12 @@ onMounted(async () => {
               <div class="text-xs uppercase font-bold rounded bg-highlight px-3 py-1">Type</div>
               <div class="font-bold">{{ token.name }}</div>
               <div class="flex-grow"></div>
+              <button v-if="selectedModel" class="btn bg-base border-base" @click="selectedModel = ''">Show All</button>
               <button class="btn bg-base border-base btn-icon" @click="copyToClipboard(token)">
                 <span class="i-tabler-clipboard text-lg"></span>
               </button>
             </div>
-            <CodeViewer :code="token" />
+            <CodeViewer :modelValue="token" />
           </div>
         </div>
         <div v-if="!selectedModel || filteredModelTokens.length">
@@ -167,11 +183,12 @@ onMounted(async () => {
               <div class="text-xs uppercase font-bold rounded bg-highlight px-3 py-1">Model</div>
               <div class="font-bold">{{ token.name }}</div>
               <div class="flex-grow"></div>
+              <button v-if="selectedModel" class="btn bg-base border-base" @click="selectedModel = ''">Show All</button>
               <button class="btn bg-base border-base btn-icon" @click="copyToClipboard(token)">
                 <span class="i-tabler-clipboard text-lg"></span>
               </button>
             </div>
-            <CodeViewer :code="token" />
+            <CodeViewer :modelValue="token" />
           </div>
         </div>
       </div>
@@ -179,14 +196,14 @@ onMounted(async () => {
       <!-- schema -->
       <div v-else-if="generatorType === 'schema'">
         <div v-for="schema in filteredSchema" class="bg-base">
-          <div class="sticky top-9 h-row bg-base color-base border-y border-base px-4 p-2">
+          <div class="sticky top-10 h-row bg-shade color-base border-y border-base px-4 p-2">
             <div class="font-bold">{{ schema.$id }}</div>
             <div class="flex-grow"></div>
             <button class="btn bg-base border-base btn-icon" @click="copyToClipboard(schema)">
               <span class="i-tabler-clipboard text-lg"></span>
             </button>
           </div>
-          <CodeViewer :code="schema" language="json" class="text-xs" />
+          <CodeViewer :modelValue="schema" language="json" class="text-xs" />
         </div>
         <div v-if="filteredSchema.length === 0" class="text-center p-10 font-medium text-base">No <span
             class="font-bold text-light-blue-400">@{{ operationType.toLowerCase() }}</span> defined in <span
@@ -195,20 +212,20 @@ onMounted(async () => {
 
       <!-- typescript -->
       <div v-else-if="generatorType === 'typescript' && typescript">
-        <CodeViewer :code="typescript" language="typescript" />
+        <CodeViewer :modelValue="typescript" language="typescript" />
       </div>
 
       <!-- service -->
       <div v-else-if="generatorType === 'service' && service">
-        <!-- <highlightjs language='typescript' :code="service" class="text-sm" /> -->
-        <CodeViewer :code="service" language="typescript" />
+        <CodeViewer :modelValue="service" language="typescript" />
         <button class="absolute top-4 right-4 btn bg-base border-base btn-icon" @click="copyToClipboard(service)">
           <span class="i-tabler-clipboard text-lg"></span>
         </button>
       </div>
 
       <div v-else-if="generatorType === 'mongodb'">
-        <div class="p-10 text-center">When available, will provide indexing commands to ensure MongoDB is in sync with Prisma schema. Currently in development.</div>
+        <div class="p-10 text-center">When available, will provide indexing commands to ensure MongoDB is in sync with
+          Prisma schema. Currently in development.</div>
       </div>
     </div>
   </div>

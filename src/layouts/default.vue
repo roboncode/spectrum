@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import PrismaLogo from '~/components/app/PrismaLogo.vue';
 const scrollLocked = useScrollLock(document.body)
 const { y } = useScroll(window)
 const appbarClass = computed(() => {
@@ -7,10 +6,13 @@ const appbarClass = computed(() => {
   return ''
 })
 
-const showDrawer = ref(false)
+// const showDrawer = ref(false)
 
 const isDark = useDark({})
 const toggleDark = useToggle(isDark)
+if (!isDark.value) {
+  toggleDark()
+}
 </script>
 
 <template>
@@ -32,7 +34,7 @@ const toggleDark = useToggle(isDark)
   </div>
 
   <!-- :: NAVIGATION DRAWER :: -->
-  <Drawer name="menu" v-model="showDrawer" right="false">
+  <!-- <Drawer name="menu" v-model="showDrawer" right="false">
     <div class="flex items-center gap-1 h-10 p-4 pl-6 pr-2 pt-7 gap-3">
       <img src="/favicon-32x32.png" class="overflow-hidden rounded">
       <div class="font-bold flex-grow">CourtSoft</div>
@@ -46,7 +48,7 @@ const toggleDark = useToggle(isDark)
         <span>Home</span>
       </router-link>
     </div>
-  </Drawer>
+  </Drawer> -->
 
   <!-- :: MAIN :: -->
   <div name="content" class="flex">
