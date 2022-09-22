@@ -27,8 +27,8 @@ if (!isDark.value) {
       <!-- <button class="flex rounded-full w-10 h-10 items-center justify-center" @click="toggleDark()">
         <span class="i-tabler-moon"></span>
       </button> -->
-      <div class="i-simple-icons-prisma text-2xl text-light-blue-400"></div>
-      <div class="hidden md:block font-bold whitespace-nowrap">Prisma Tools</div>
+      <div class="i-simple-icons-prisma text-2xl text-pink-600"></div>
+      <div class="hidden md:block font-bold whitespace-nowrap">Spectrum - Tools for Prisma</div>
     </div>
     <div id="actions" class="w-full"></div>
   </div>

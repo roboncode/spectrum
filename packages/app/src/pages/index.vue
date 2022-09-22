@@ -159,6 +159,7 @@ onMounted(async () => {
       <div class="sticky top-0 w-full h-row p-2 z-1">
         <div class="flex-grow"></div>
         <!-- <button class="btn bg-base border-base" @click="selectedModel = ''">Clear Select Model</button> -->
+        <button v-if="input" class="btn bg-base border-base" @click="useExample()">Reload</button>
         <button v-if="input" class="btn bg-base border-base" @click="savePrismaSchema()">Save</button>
         <button v-if="input" class="btn bg-base border-base" @click="input = ''">Clear</button>
         <button v-else="input" class="btn bg-base border-base" @click="useExample()">Use Prisma

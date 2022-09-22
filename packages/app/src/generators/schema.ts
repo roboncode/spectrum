@@ -22,29 +22,29 @@ const isJson = (type: string) => {
   return type === 'Json'
 }
 
-const formatDefaultArrayItems = (s: string, type: string) => {
-  const arr = s
-    .replace(/\[|\]/g, '')
-    .split(',')
-    .map((s: string) => {
-      s = `${s}`.trim()
-      if (type === 'Boolean') {
-        return s === 'true'
-      }
-      if (isNumber(type)) {
-        return Number(s)
-      }
-      return s
-    })
-  return arr
-}
+// const formatDefaultArrayItems = (s: string, type: string) => {
+//   const arr = s
+//     .replace(/\[|\]/g, '')
+//     .split(',')
+//     .map((s: string) => {
+//       s = `${s}`.trim()
+//       if (type === 'Boolean') {
+//         return s === 'true'
+//       }
+//       if (isNumber(type)) {
+//         return Number(s)
+//       }
+//       return s
+//     })
+//   return arr
+// }
 
 const newObjectSchema = (properties?: any): any => {
   return {
     ...properties,
     type: 'object',
     default: undefined,
-    required: [] as string[],
+    // required: [] as string[],
     additionalProperties: false,
     properties: {} as any,
   }
@@ -53,7 +53,7 @@ const newObjectSchema = (properties?: any): any => {
 const newArraySchema = (items: any = {}): any => {
   return {
     type: 'array',
-    required: [] as string[],
+    // required: [] as string[],
     // additionalProperties: false,
     items,
   }
@@ -117,24 +117,29 @@ export const generateSchemas = (
 
   const populateJSONSchema = (schema: any, modelToken: ModelToken) => {
     modelToken.properties.forEach(propertyToken => {
-      if (propertyToken.operations?.find(operation => operation.name === operationType)) {
+      const operation = propertyToken.operations?.find(operation => operation.name === operationType)
+      if (operation) {
         const jsonSchema = createJSONSchema(propertyToken) as any // TODO: change this to interface
         schema.properties[propertyToken.name] = jsonSchema
         if (propertyToken.desc) {
           jsonSchema.description = propertyToken.desc
         }
         if (operationType === 'read' && propertyToken.hasOwnProperty('default')) {
-          if (jsonSchema.type === 'number') {
-            jsonSchema.default = Number(propertyToken.default)
-          } else if (jsonSchema.type === 'boolean') {
-            jsonSchema.default = propertyToken.default === 'true'
-          } else if (jsonSchema.type === 'array') {
-            jsonSchema.default = formatDefaultArrayItems(propertyToken.default, propertyToken.type)
-          } else {
-            jsonSchema.default = propertyToken.default
-          }
+          // if (jsonSchema.type === 'number') {
+          //   jsonSchema.default = Number(propertyToken.default)
+          // } else if (jsonSchema.type === 'boolean') {
+          //   jsonSchema.default = propertyToken.default === 'true'
+          // } else if (jsonSchema.type === 'array') {
+          //   jsonSchema.default = formatDefaultArrayItems(propertyToken.default, propertyToken.type)
+          // } else {
+          //   jsonSchema.default = propertyToken.default
+          // }
+          jsonSchema.default = propertyToken.default
         }
-        if (propertyToken.isOptional) {
+        if (operation.hasOwnProperty('default')) {
+          jsonSchema.default = operation.default
+        }
+        if (propertyToken.isOptional && !operation.hasOwnProperty('default')) {
           jsonSchema.nullable = true
         }
         if (propertyToken.type === 'String') {
@@ -153,18 +158,28 @@ export const generateSchemas = (
           }
         }
         if (propertyToken.name === 'id') {
+          ensureRequired(schema)
           schema.required.push(propertyToken.name)
         }
 
         propertyToken.operations?.forEach(operation => {
           if (operation.name === operationType && operation.required) {
+            ensureRequired(schema)
             schema.required.push(propertyToken.name)
           }
         })
         // remove duplicates from shema.required
-        schema.required = [...new Set(schema.required)]
+        if (schema.required) {
+          schema.required = [...new Set(schema.required)]
+        }
       }
     })
+  }
+
+  const ensureRequired = (schema: any) => {
+    if (!schema.required) {
+      schema.required = []
+    }
   }
 
   // loop through tokenized models and create a json schema for each model
@@ -172,7 +187,7 @@ export const generateSchemas = (
     .map(modelToken => {
       if (modelToken.type === 'model' || modelToken.type === 'type') {
         // || operationType === 'read') {
-        const schema = newObjectSchema({$id : ''})
+        const schema = newObjectSchema({ $id: '' })
         switch (operationType) {
           case 'create':
             schema.$id = `${modelToken.name}CreateInputSchema`

@@ -140,7 +140,7 @@ watch(() => props.modelValue, useDebounceFn((v: any) => {
 }
 
 .dark .token.boolean {
-    color: #00ffa7;
+    color: #ffab00;
 }
 
 .dark .token.string {

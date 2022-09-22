@@ -1,4 +1,4 @@
-# Prisma Tools
+# Spectrum - Tools for Prisma
 
 A set of development and online tools to aid in faster development using Prisma [https://www.prisma.io/](https://www.prisma.io/)
 

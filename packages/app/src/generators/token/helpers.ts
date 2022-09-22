@@ -20,9 +20,38 @@ export const hasDelete = (s = '') => s.includes('@delete')
 
 export const hasRead = (s = '') => s.includes('@read')
 
-export const hasDefault = (s = '') => s.includes('@default') && !s.trim().startsWith('id ') && !s.trim().includes('DateTime')
+export const hasDefault = (s = '') =>
+  s.includes('@default') && !s.trim().startsWith('id ') && !s.trim().includes('DateTime')
 
-export const getDefault = (s = '') => s.split('@default(')[1].split(')')[0].replaceAll('"', '')
+export const getDefault = (s = '') => {
+  let v = s.split('@default(')[1].split(')')[0].replaceAll('"', '')
+  if (v.startsWith('[') && v.endsWith(']')) {
+    v = v.replace(/(\w+)/g, '"$1"')
+  }
+  try {
+    return JSON.parse(v)
+  } catch (e) {
+    return v
+  }
+}
+
+export const hasVirtualDefault = (operationName: string, s = '') => {
+  const regExp = new RegExp(`@(${operationName})!?\\((.*)\\)`, 'g')
+  return !!s.match(regExp)
+}
+
+export const getVirtualDefault = (operationName: string, s = '') => {
+  const regExp = new RegExp(`@(${operationName})!?\\(([^)]*)`)
+  const match = s.match(regExp)
+  if (match) {
+    try {
+      return JSON.parse(`{"default": ${match.pop()}}`).default
+    } catch(e) {
+      console.error(e)
+      return '!! ERROR PARSING DEFAULT VALUE !!'
+    }
+  }
+}
 
 export const hasMin = (s = '') => {
   if (s === undefined) {

@@ -3,6 +3,7 @@ import {
   getDesc,
   getMax,
   getMin,
+  getVirtualDefault,
   hasCreate,
   hasDefault,
   hasDelete,
@@ -11,6 +12,7 @@ import {
   hasRead,
   hasUnique,
   hasUpdate,
+  hasVirtualDefault,
   isClosingBracket,
   isComment,
   isIndex,
@@ -55,6 +57,7 @@ export interface PropertyToken {
 export interface PropertyOperationToken {
   name: string
   required: boolean
+  default?: any
 }
 
 const getModelName = (s: string) => {
@@ -88,10 +91,11 @@ const getPropertyOperations = (line: string): PropertyOperationToken[] => {
       return hasOperations(operation.trim())
     })
     .map(operation => {
-      const operationName = operation.trim().split(' ')[0]
+      const operationName = operation.trim().match(/@(\w+)/)?.pop() as string
       return {
-        name: operationName.replace(/\W+/g, ''),
+        name: operationName,
         required: isRequired(operation),
+        default: hasVirtualDefault(operationName, line) ? getVirtualDefault(operationName, line) : undefined,
       }
     })
 }
@@ -223,7 +227,7 @@ export const parseModel = (line: string, lines: Iterator<any>) => {
   }
   while (lines.hasNext()) {
     const line = lines.next().value
-    if (isComment(line) && isVirtualProperty(line)) {
+    if (isComment(line) && !isVirtualProperty(line)) {
       continue
     }
 

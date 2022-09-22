@@ -77,7 +77,7 @@ export default defineConfig({
         "btn-primary": 'flex items-center justify-center px-6 py-3 space-x-1 text-sm font-semibold leading-4 text-center transition-colors duration-300 bg-primary rounded hover:bg-blue-600 text-blue-50',
         "btn-danger": 'flex items-center justify-center px-6 py-3 space-x-1 text-sm font-semibold leading-4 text-center transition-colors duration-300 bg-danger rounded hover:bg-red-600 text-blue-50',
         'btn-disabled': 'disabled:bg-gray-100 disabled:border-gray-200 disabled:text-gray-300 disabled:cursor-default disabled:pointer-events-none disabled:drop-shadow-none disabled:select-none',
-        "btn": 'inline-flex whitespace-nowrap items-center justify-center px-6 py-2 space-x-2 text-sm font-semibold text-center text-gray-600 border border-gray-200 bg-white rounded-md hover:bg-highlight hover:drop-shadow-sm disabled:bg-gray-50 disabled:text-gray-300 disabled:cursor-default disabled:pointer-events-none disabled:drop-shadow-none disabled:select-none',
+        "btn": 'inline-flex whitespace-nowrap items-center justify-center px-6 py-2 space-x-2 text-sm font-semibold text-center text-gray-200 border border-gray-200 bg-white rounded-md hover:bg-highlight hover:drop-shadow-sm disabled:bg-gray-50 disabled:text-gray-300 disabled:cursor-default disabled:pointer-events-none disabled:drop-shadow-none disabled:select-none',
         "btn-sm": 'py-1 px-3 text-sm',
         "btn-icon": 'p-2 text-lg',
         "btn-outline-primary": 'border-primary text-primary',

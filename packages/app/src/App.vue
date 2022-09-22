@@ -10,6 +10,23 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Focus Ring */
+
+:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.8);
+}
+
+::-moz-selection { /* Code for Firefox */
+  color: white;
+  background: #007bcc;
+}
+
+::selection {
+  color: white;
+  background: #007bcc;
+}
+
 /* Tooltip */
 .v-popper__popper {
   font-size: 0.8rem;
@@ -44,6 +61,10 @@
 .tabs:not(.tabs-outline) .tab:checked,
 .tabs:not(.tabs-outline) .tab:checked+label {
   @apply border-b-light-blue-400 font-bold;
+}
+
+.tabs .tab:focus {
+  box-shadow: none;
 }
 
 
